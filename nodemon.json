@@ -1,0 +1,5 @@
+{
+  "watch": ["src", "public", "tsconfig.json"],
+  "ext": "ts,tsx,js,css,html,json",
+  "exec": "npm run build"
+} 
