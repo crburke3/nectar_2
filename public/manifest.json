@@ -1,32 +1,44 @@
 {
   "manifest_version": 3,
-  "name": "Your Extension Name",
+  "name": "Nectar",
   "version": "1.0",
   "permissions": [
     "tabs",
     "scripting",
     "webRequest",
     "webRequestBlocking",
-    "sidePanel"
+    "sidePanel",
+    "activeTab",
+    "storage",
+    "webNavigation"
   ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "run_at": "document_end"
+      "run_at": "document_start"
     }
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Click to open panel"
+    "default_title": "Click to open panel",
+    "default_popup": "popup.html"
   },
   "side_panel": {
     "default_path": "index.html"
   },
   "host_permissions": [
-    "http://*/*",
-    "https://*/*"
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "affiliate-active.html",
+        "affiliate-missing.html"
+      ],
+      "matches": ["<all_urls>"]
+    }
   ]
 }

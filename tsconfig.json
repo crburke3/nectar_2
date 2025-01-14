@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "sourceMap": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     // "target": "esnext",

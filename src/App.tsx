@@ -5,8 +5,6 @@ import './App.css'
 
 function App() {
 
-  const [color, setColor] = useState("red")
-  const [count, setCount] = useState(0)
   const [urlLogs, setUrlLogs] = useState<string[]>([])
   const [networkLogs, setNetworkLogs] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<'url' | 'network'>('url')
@@ -27,37 +25,16 @@ function App() {
     }
   }, [])
 
-  useEffect(() => {
-    // Send a message to the background script when the side panel opens
-    chrome.runtime.sendMessage({ action: 'sidePanelOpened' });
-  }, []);
+  const sendMessageToContentScript = () => {
+    chrome.runtime.sendMessage({ greeting: "Hello from app.tsx" }, (response) => {
+        console.log("Response from content.js:", response);
+    });
+};
 
-  const onClick = async () => {
-    console.log("FUCCCC")
-    setCount(count + 1)
-    let [tab] = await chrome.tabs.query({active: true})
-    // had to add the <string[], void> as we are passing variable between
-    // the popup and the page context, confusing as fuck but do whats below
-    chrome.scripting.executeScript<string[], void>({
-      target: {tabId: tab.id!},
-      args: [color],
-      func: (color) => {
-        // alert("hello from my extension")
-
-        document.body.style.backgroundColor = color
-      }
-    })
-  }
-
-  const clearLogs = () => {
-    setUrlLogs([]); // Clear the logs in the state
-    setNetworkLogs([]); // Clear network logs
-    chrome.runtime.sendMessage({ action: 'clearLogs' }); // Send a message to the background script
-  }
-
-  const handleNewUrlClick = () => {
-    // Send a message to the background script to trigger handleNewUrl
-    chrome.runtime.sendMessage({ action: 'triggerHandleNewUrl' });
+  const showAffiliatePopup = () => {
+    // Send a message to the background script to show the affiliate popup
+    console.log("Showing affiliate popup");
+    chrome.runtime.sendMessage({ type: "SHOW_AFFILIATE_POPUP", message: "Nectar is active! Enjoy 2% back on your purchase." });
   };
 
   return (
@@ -69,12 +46,8 @@ function App() {
       </div>
       <h1>Nectar</h1>
       <div className="card">
-        <input type="color" onChange={(e) => setColor(e.currentTarget.value)} />
-        <button onClick={onClick}>
-          count is {count}
-        </button>
-        <button onClick={clearLogs}>Clear Logs</button>
-        <button onClick={handleNewUrlClick}>Check Page</button>
+        <button onClick={showAffiliatePopup}>Show Affiliate Popup</button>
+        <button onClick={sendMessageToContentScript}>Send Message</button>
       </div>
 
       <div className="tabs">
@@ -106,7 +79,6 @@ function App() {
           </ul>
         </div>
       )}
-
     </>
   )
 }
